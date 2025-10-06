@@ -1,0 +1,95 @@
+
+{% extends "base.html" %}
+{% block content %}
+<h3>Stan magazynowy SPRĘŻYN</h3>
+<div class="row mb-2">
+  <div class="col-md-6">
+    <input id="searchSprezyny" class="form-control" placeholder="Szukaj (live) — wpisz, aby filtrować...">
+  </div>
+  <div class="col-md-6 text-end">
+    {% if role == 'admin' %}
+    <button class="btn btn-success" data-bs-toggle="collapse" data-bs-target="#addForm">Dodaj nowy wpis</button>
+    {% endif %}
+  </div>
+</div>
+<div id="addForm" class="collapse mb-3">
+  {% if role == 'admin' %}
+  <div class="card card-body">
+    <form method="post">
+      <div class="row g-2">
+        <div class="col-md-3"><input name="klient" class="form-control" placeholder="Klient"></div>
+        <div class="col-md-3"><input name="nazwa_detalu" class="form-control" placeholder="Nazwa detalu"></div>
+        <div class="col-md-2"><input name="nr_rysunku" class="form-control" placeholder="Nr. rysunku"></div>
+        <div class="col-md-1"><input name="ilosc" class="form-control" placeholder="Ilość"></div>
+        <div class="col-md-3"><input name="rodzaj_sprezyny" class="form-control" placeholder="Rodzaj"></div>
+      </div>
+      <div class="row g-2 mt-2">
+        <div class="col-md-3"><input name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu"></div>
+        <div class="col-md-2"><input name="srednica_dz" class="form-control" placeholder="Średnica Dz"></div>
+        <div class="col-md-2"><input name="dlugosc_lo" class="form-control" placeholder="Długość Lo"></div>
+        <div class="col-md-2"><input name="liczba_zwoi" class="form-control" placeholder="Zwoi"></div>
+        <div class="col-md-2"><input name="szlifowanie" class="form-control" placeholder="Szlifowanie (tak/nie)"></div>
+      </div>
+      <button class="btn btn-primary mt-3">Dodaj</button>
+    </form>
+  </div>
+  {% endif %}
+</div>
+<div class="table-responsive">
+  <table class="table table-striped" id="sprezTable">
+    <thead><tr>
+      <th>ID</th><th>Klient</th><th>Nazwa</th><th>Rysunek</th><th>Ilość</th><th>Rodzaj</th><th>Gatunek</th><th>Dz</th><th>Lo</th><th>Zwoi</th><th>Szlif</th>{% if role=='admin' %}<th>Akcje</th>{% endif %}
+    </tr></thead>
+    <tbody id="sprezBody">
+      {% for row in dane %}
+      <tr>
+        <td>{{ row[0] }}</td>
+        <td>{{ row[1] }}</td>
+        <td>{{ row[2] }}</td>
+        <td>{{ row[3] }}</td>
+        <td>{{ row[4] }}</td>
+        <td>{{ row[5] }}</td>
+        <td>{{ row[6] }}</td>
+        <td>{{ row[7] }}</td>
+        <td>{{ row[8] }}</td>
+        <td>{{ row[9] }}</td>
+        <td>{{ row[10] }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<script>
+// debounce helper (same as drut)
+function debounce(fn, delay) {
+  let t;
+  return function(...args) {
+    clearTimeout(t);
+    t = setTimeout(() => fn.apply(this, args), delay);
+  }
+}
+
+async function fetchSprez(q) {
+  const url = '/sprezyny/search?q=' + encodeURIComponent(q);
+  const res = await fetch(url);
+  if (!res.ok) return;
+  const data = await res.json();
+  const body = document.getElementById('sprezBody');
+  body.innerHTML = '';
+  data.forEach(row => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${row.id}</td><td>${row.klient||''}</td><td>${row.nazwa_detalu||''}</td><td>${row.nr_rysunku||''}</td><td>${row.ilosc||''}</td>
+      <td>${row.rodzaj_sprezyny||''}</td><td>${row.gatunek_drutu||''}</td><td>${row.srednica_dz||''}</td><td>${row.dlugosc_lo||''}</td><td>${row.liczba_zwoi||''}</td><td>${row.szlifowanie||''}</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+const inputS = document.getElementById('searchSprezyny');
+inputS.addEventListener('keyup', debounce((e) => {
+  fetchSprez(e.target.value);
+}, 250));
+</script>
+{% endblock %}
