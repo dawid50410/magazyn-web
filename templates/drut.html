@@ -12,123 +12,149 @@
     {% endif %}
   </div>
 </div>
+</div>
 <div id="addForm" class="collapse mb-3">
   {% if role == 'admin' %}
-  <div class="card card-body">
+  <div class="card card-body shadow-sm border">
     <form method="post">
-      <div class="row g-2">
-        <div class="col-md-4"><input name="stan" class="form-control" placeholder="Stan"></div>
-        <div class="col-md-4"><input name="srednica_drutu" class="form-control" placeholder="Średnica drutu [mm]"></div>
-        <div class="col-md-4"><input name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu"></div>
+
+      <div class="row g-3">
+        <div class="col-md-4">
+          <label for="stan" class="form-label">Stan</label>
+          <input id="stan" name="stan" class="form-control" placeholder="Stan">
+        </div>
+        <div class="col-md-4">
+          <label for="srednica_drutu" class="form-label">Średnica drutu [mm]</label>
+          <input id="srednica_drutu" name="srednica_drutu" class="form-control" placeholder="Średnica drutu [mm]">
+        </div>
+        <div class="col-md-4">
+          <label for="gatunek_drutu" class="form-label">Gatunek drutu</label>
+          <input id="gatunek_drutu" name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu">
+        </div>
       </div>
-      <div class="row g-2 mt-2">
-        <div class="col-md-3"><input name="dostawca" class="form-control" placeholder="Dostawca"></div>
-        <div class="col-md-2"><input name="ilosc_szpule_kregi" class="form-control" placeholder="Ilość"></div>
-        <div class="col-md-2"><input name="waga" class="form-control" placeholder="Waga"></div>
-        <div class="col-md-2"><input name="suma_kg" class="form-control" placeholder="Suma [kg]"></div>
-        <div class="col-md-3"><input name="partia_materialu_nr" class="form-control" placeholder="Partia nr."></div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-3">
+          <label for="dostawca" class="form-label">Dostawca</label>
+          <input id="dostawca" name="dostawca" class="form-control" placeholder="Dostawca">
+        </div>
+        <div class="col-md-2">
+          <label for="ilosc" class="form-label">Ilość</label>
+          <input id="ilosc" name="ilosc_szpule_kregi" type="number" min="0" class="form-control" placeholder="Ilość">
+        </div>
+        <div class="col-md-2">
+          <label for="rodzaj" class="form-label">Rodzaj</label>
+          <select id="rodzaj" name="rodzaj" class="form-select">
+            <option value="">-- wybierz --</option>
+            <option value="szpule">Szpule</option>
+            <option value="kręgi">Kręgi</option>
+          </select>
+        </div>
+        <div class="col-md-2">
+          <label for="waga" class="form-label">Waga szt [kg]</label>
+          <input id="waga" name="waga" type="number" step="0.01" min="0" class="form-control" placeholder="Waga szt [kg]">
+        </div>
+        <div class="col-md-3">
+          <label for="suma" class="form-label">Suma [kg]</label>
+          <input id="suma" name="suma_kg" class="form-control" placeholder="Suma [kg]" readonly>
+        </div>
       </div>
-      <div class="row g-2 mt-2">
-        <div class="col-md-4"><input name="przewidywana_data_dostawy" class="form-control" placeholder="Przew. data dostawy"></div>
-        <div class="col-md-4"><input name="przyjecie_materialu" class="form-control" placeholder="Przyjęcie materiału"></div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-4">
+          <label for="partia_materialu_nr" class="form-label">Partia materiału nr.</label>
+          <input id="partia_materialu_nr" name="partia_materialu_nr" class="form-control" placeholder="Partia materiału nr.">
+        </div>
+        <div class="col-md-4">
+          <label for="przewidywana_data_dostawy" class="form-label">Przew. data dostawy</label>
+          <input id="przewidywana_data_dostawy" name="przewidywana_data_dostawy" class="form-control" placeholder="Przew. data dostawy">
+        </div>
+        <div class="col-md-4">
+          <label for="przyjecie_materialu" class="form-label">Przyjęcie materiału</label>
+          <input id="przyjecie_materialu" name="przyjecie_materialu" class="form-control" placeholder="Przyjęcie materiału">
+        </div>
       </div>
+
       <button class="btn btn-primary mt-3">Dodaj</button>
     </form>
   </div>
   {% endif %}
 </div>
+
+
+
 <div class="table-responsive">
-  <table class="table table-striped" id="drutTable">
-    <thead><tr>
-      <th>ID</th><th>Stan</th><th>Średnica</th><th>Gatunek</th><th>Dostawca</th><th>Ilość</th><th>Waga</th><th>Suma</th><th>Partia</th><th>Przew. data</th><th>Przyjęcie</th>{% if role=='admin' %}<th>Akcje</th>{% endif %}
-    </tr></thead>
-    <tbody id="drutBody">
-      {% for row in dane %}
-      <tr>
-        <td>{{ row[0] }}</td>
-        <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</td>
-        <td>{{ row[3] }}</td>
-        <td>{{ row[4] }}</td>
-        <td>{{ row[5] }}</td>
-        <td>{{ row[6] }}</td>
-        <td>{{ row[7] }}</td>
-        <td>{{ row[8] }}</td>
-        <td>{{ row[9] }}</td>
-        <td>{{ row[10] }}</td>
-        {% if role=='admin' %}
-        <td>
-          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ row[0] }}">Edytuj</button>
-          <form method="post" action="{{ url_for('drut_delete', record_id=row[0]) }}" style="display:inline;">
-            <button class="btn btn-sm btn-danger" onclick="return confirm('Usuń rekord?')">Usuń</button>
-          </form>
-          <div class="modal fade" id="editModal{{ row[0] }}" tabindex="-1">
-            <div class="modal-dialog modal-lg">
-              <div class="modal-content">
-                <form method="post" action="{{ url_for('drut_edit', record_id=row[0]) }}">
-                <div class="modal-header"><h5 class="modal-title">Edytuj #{{ row[0] }}</h5><button class="btn-close" data-bs-dismiss="modal"></button></div>
-                <div class="modal-body">
-                  <div class="row g-2">
-                    <div class="col-md-4"><input name="stan" class="form-control" value="{{ row[1] }}"></div>
-                    <div class="col-md-4"><input name="srednica_drutu" class="form-control" value="{{ row[2] }}"></div>
-                    <div class="col-md-4"><input name="gatunek_drutu" class="form-control" value="{{ row[3] }}"></div>
-                  </div>
-                  <div class="row g-2 mt-2">
-                    <div class="col-md-3"><input name="dostawca" class="form-control" value="{{ row[4] }}"></div>
-                    <div class="col-md-2"><input name="ilosc_szpule_kregi" class="form-control" value="{{ row[5] }}"></div>
-                    <div class="col-md-2"><input name="waga" class="form-control" value="{{ row[6] }}"></div>
-                    <div class="col-md-2"><input name="suma_kg" class="form-control" value="{{ row[7] }}"></div>
-                    <div class="col-md-3"><input name="partia_materialu_nr" class="form-control" value="{{ row[8] }}"></div>
-                  </div>
-                  <div class="row g-2 mt-2">
-                    <div class="col-md-4"><input name="przewidywana_data_dostawy" class="form-control" value="{{ row[9] }}"></div>
-                    <div class="col-md-4"><input name="przyjecie_materialu" class="form-control" value="{{ row[10] }}"></div>
-                  </div>
-                </div>
-                <div class="modal-footer"><button class="btn btn-primary">Zapisz</button></div>
-                </form>
-              </div>
-            </div>
-          </div>
-        </td>
-        {% endif %}
-      </tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<table class="table table-striped table-bordered align-middle text-center" id="drutTable">
+  <thead class="table-light text-uppercase">
+    <tr>
+      <th>Stan</th>
+      <th>Średnica [mm]</th>
+      <th>Gatunek drutu</th>
+      <th>Dostawca</th>
+      <th>Ilość</th>
+      <th>Rodzaj</th>
+      <th>Waga szt</th>
+      <th>Suma kg</th>
+      <th>Partia materiału nr</th>
+      <th>Przew. data dostawy</th>
+      <th>Przyjęcie</th>
+      {% if role=='admin' %}<th>Akcje</th>{% endif %}
+    </tr>
+  </thead>
+  <tbody id="drutBody">
+    {% for row in dane %}
+    <tr>
+      <td>{{ row[1] }}</td>
+      <td>{{ row[2] }}</td>
+      <td>{{ row[3] }}</td>
+      <td>{{ row[4] }}</td>
+      <td>{{ row[5] }}</td>
+      <td>{{ row[6] }}</td>
+      <td>{{ row[7] }}</td>
+      <td>{{ row[8] }}</td>
+      <td>{{ row[9] }}</td>
+      <td>{{ row[10] }}</td>
+      <td>{{ row[11] }}</td>
+      {% if role=='admin' %}
+      <td>
+        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ row[0] }}">Edytuj</button>
+        <form method="post" action="{{ url_for('drut_delete', record_id=row[0]) }}" style="display:inline;">
+          <button class="btn btn-sm btn-danger" onclick="return confirm('Usuń rekord?')">Usuń</button>
+        </form>
+      </td>
+      {% endif %}
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
 </div>
 
+
 <script>
-// debounce helper
-function debounce(fn, delay) {
-  let t;
-  return function(...args) {
-    clearTimeout(t);
-    t = setTimeout(() => fn.apply(this, args), delay);
-  }
-}
+  // Pobieramy element input i tabelę
+  const searchInput = document.getElementById('searchDrut');
+  const table = document.getElementById('drutTable');
+  const tbody = document.getElementById('drutBody');
 
-async function fetchDrut(q) {
-  const url = '/drut/search?q=' + encodeURIComponent(q);
-  const res = await fetch(url);
-  if (!res.ok) return;
-  const data = await res.json();
-  const body = document.getElementById('drutBody');
-  body.innerHTML = '';
-  data.forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row.id}</td><td>${row.stan||''}</td><td>${row.srednica_drutu||''}</td><td>${row.gatunek_drutu||''}</td>
-      <td>${row.dostawca||''}</td><td>${row.ilosc_szpule_kregi||''}</td><td>${row.waga||''}</td><td>${row.suma_kg||''}</td>
-      <td>${row.partia_materialu_nr||''}</td><td>${row.przewidywana_data_dostawy||''}</td><td>${row.przyjecie_materialu||''}</td>
-    `;
-    body.appendChild(tr);
+  searchInput.addEventListener('input', function() {
+    const filter = this.value.toLowerCase(); // zamiana na małe litery dla łatwego porównania
+    const rows = tbody.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td');
+      let match = false;
+
+      // sprawdzamy każdą komórkę w wierszu
+      for (let j = 0; j < cells.length; j++) {
+        if (cells[j].textContent.toLowerCase().includes(filter)) {
+          match = true;
+          break;
+        }
+      }
+
+      // pokazujemy lub ukrywamy wiersz w zależności od dopasowania
+      rows[i].style.display = match ? '' : 'none';
+    }
   });
-}
-
-const inputD = document.getElementById('searchDrut');
-inputD.addEventListener('keyup', debounce((e) => {
-  fetchDrut(e.target.value);
-}, 250));
 </script>
 {% endblock %}

@@ -18,7 +18,7 @@ def login():
             session['username'] = username
             session['role'] = users.get_role(username)
             flash('Zalogowano pomyślnie', 'success')
-            return redirect(url_for('index'))
+            return redirect(url_for('drut_page'))
         else:
             flash('Błędne dane logowania', 'danger')
     return render_template('login.html')

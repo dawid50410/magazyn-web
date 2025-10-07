@@ -14,32 +14,78 @@
 </div>
 <div id="addForm" class="collapse mb-3">
   {% if role == 'admin' %}
-  <div class="card card-body">
+  <div class="card card-body shadow-sm border">
     <form method="post">
-      <div class="row g-2">
-        <div class="col-md-3"><input name="klient" class="form-control" placeholder="Klient"></div>
-        <div class="col-md-3"><input name="nazwa_detalu" class="form-control" placeholder="Nazwa detalu"></div>
-        <div class="col-md-2"><input name="nr_rysunku" class="form-control" placeholder="Nr. rysunku"></div>
-        <div class="col-md-1"><input name="ilosc" class="form-control" placeholder="Ilość"></div>
-        <div class="col-md-3"><input name="rodzaj_sprezyny" class="form-control" placeholder="Rodzaj"></div>
+      <div class="row g-3">
+        <div class="col-md-3">
+          <label for="klient" class="form-label">Klient</label>
+          <input id="klient" name="klient" class="form-control" placeholder="Klient">
+        </div>
+        <div class="col-md-3">
+          <label for="nazwa_detalu" class="form-label">Nazwa detalu</label>
+          <input id="nazwa_detalu" name="nazwa_detalu" class="form-control" placeholder="Nazwa detalu">
+        </div>
+        <div class="col-md-2">
+          <label for="nr_rysunku" class="form-label">Nr. rysunku</label>
+          <input id="nr_rysunku" name="nr_rysunku" class="form-control" placeholder="Nr. rysunku">
+        </div>
+        <div class="col-md-1">
+          <label for="ilosc" class="form-label">Ilość</label>
+          <input id="ilosc" name="ilosc" type="number" min="0" class="form-control" placeholder="Ilość">
+        </div>
+        <div class="col-md-3">
+          <label for="rodzaj_sprezyny" class="form-label">Rodzaj sprężyny</label>
+          <input id="rodzaj_sprezyny" name="rodzaj_sprezyny" class="form-control" placeholder="Rodzaj">
+        </div>
       </div>
-      <div class="row g-2 mt-2">
-        <div class="col-md-3"><input name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu"></div>
-        <div class="col-md-2"><input name="srednica_dz" class="form-control" placeholder="Średnica Dz"></div>
-        <div class="col-md-2"><input name="dlugosc_lo" class="form-control" placeholder="Długość Lo"></div>
-        <div class="col-md-2"><input name="liczba_zwoi" class="form-control" placeholder="Zwoi"></div>
-        <div class="col-md-2"><input name="szlifowanie" class="form-control" placeholder="Szlifowanie (tak/nie)"></div>
+
+      <div class="row g-3 mt-2">
+        <div class="col-md-3">
+          <label for="grubosc_drutu" class="form-label">Grubość drutu</label>
+          <input id="grubosc_drutu" name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu">
+        </div>
+        <div class="col-md-2">
+          <label for="srednica_dz" class="form-label">Średnica Dz</label>
+          <input id="srednica_dz" name="srednica_dz" class="form-control" placeholder="Średnica Dz">
+        </div>
+        <div class="col-md-2">
+          <label for="dlugosc_lo" class="form-label">Długość Lo</label>
+          <input id="dlugosc_lo" name="dlugosc_lo" class="form-control" placeholder="Długość Lo">
+        </div>
+        <div class="col-md-2">
+          <label for="liczba_zwoi" class="form-label">Liczba zwoi</label>
+          <input id="liczba_zwoi" name="liczba_zwoi" class="form-control" placeholder="Liczba zwoi">
+        </div>
+        <div class="col-md-3">
+          <label for="szlifowanie" class="form-label">Szlifowanie</label>
+          <input id="szlifowanie" name="szlifowanie" class="form-control" placeholder="Szlifowanie (tak/nie)">
+        </div>
       </div>
+
       <button class="btn btn-primary mt-3">Dodaj</button>
     </form>
   </div>
   {% endif %}
 </div>
+
 <div class="table-responsive">
-  <table class="table table-striped" id="sprezTable">
-    <thead><tr>
-      <th>ID</th><th>Klient</th><th>Nazwa</th><th>Rysunek</th><th>Ilość</th><th>Rodzaj</th><th>Gatunek</th><th>Dz</th><th>Lo</th><th>Zwoi</th><th>Szlif</th>{% if role=='admin' %}<th>Akcje</th>{% endif %}
-    </tr></thead>
+  <table class="table table-striped table-bordered" id="sprezTable">
+    <thead>
+      <tr>
+        <th>KLIENT</th>
+        <th>Nazwa detalu</th>
+        <th>Nr. rysunku</th>
+        <th>Ilość</th>
+        <th>Rodzaj sprężyny</th>
+        <th>Grubość drutu</th>
+        <th>Gatunek drutu</th>
+        <th>Średnica Dz</th>
+        <th>Długość Lo</th>
+        <th>Liczba zwoi</th>
+        <th>SZLIFOWANIE</th>
+        {% if role=='admin' %}<th>Akcje</th>{% endif %}
+      </tr>
+    </thead>
     <tbody id="sprezBody">
       {% for row in dane %}
       <tr>
@@ -54,42 +100,46 @@
         <td>{{ row[8] }}</td>
         <td>{{ row[9] }}</td>
         <td>{{ row[10] }}</td>
+        {% if role=='admin' %}
+        <td>
+          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ row[0] }}">Edytuj</button>
+          <form method="post" action="{{ url_for('sprezyny_delete', record_id=row[0]) }}" style="display:inline;">
+            <button class="btn btn-sm btn-danger" onclick="return confirm('Usuń rekord?')">Usuń</button>
+          </form>
+        </td>
+        {% endif %}
       </tr>
       {% endfor %}
     </tbody>
   </table>
 </div>
 
+
 <script>
-// debounce helper (same as drut)
-function debounce(fn, delay) {
-  let t;
-  return function(...args) {
-    clearTimeout(t);
-    t = setTimeout(() => fn.apply(this, args), delay);
-  }
-}
+  // Pobieramy input i tabelę
+  const searchInputSprezyny = document.getElementById('searchSprezyny');
+  const sprezTable = document.getElementById('sprezTable');
+  const sprezBody = document.getElementById('sprezBody');
 
-async function fetchSprez(q) {
-  const url = '/sprezyny/search?q=' + encodeURIComponent(q);
-  const res = await fetch(url);
-  if (!res.ok) return;
-  const data = await res.json();
-  const body = document.getElementById('sprezBody');
-  body.innerHTML = '';
-  data.forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row.id}</td><td>${row.klient||''}</td><td>${row.nazwa_detalu||''}</td><td>${row.nr_rysunku||''}</td><td>${row.ilosc||''}</td>
-      <td>${row.rodzaj_sprezyny||''}</td><td>${row.gatunek_drutu||''}</td><td>${row.srednica_dz||''}</td><td>${row.dlugosc_lo||''}</td><td>${row.liczba_zwoi||''}</td><td>${row.szlifowanie||''}</td>
-    `;
-    body.appendChild(tr);
+  searchInputSprezyny.addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const rows = sprezBody.getElementsByTagName('tr');
+
+    for (let i = 0; i < rows.length; i++) {
+      const cells = rows[i].getElementsByTagName('td');
+      let match = false;
+
+      // sprawdzamy każdą komórkę w wierszu
+      for (let j = 0; j < cells.length; j++) {
+        if (cells[j].textContent.toLowerCase().includes(filter)) {
+          match = true;
+          break;
+        }
+      }
+
+      // pokazujemy lub ukrywamy wiersz
+      rows[i].style.display = match ? '' : 'none';
+    }
   });
-}
-
-const inputS = document.getElementById('searchSprezyny');
-inputS.addEventListener('keyup', debounce((e) => {
-  fetchSprez(e.target.value);
-}, 250));
 </script>
 {% endblock %}

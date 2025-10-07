@@ -1,0 +1,60 @@
+/* ---- Sticky header z cieniem dla tabel DRUT i SPREŻYNY ---- */
+.table-responsive {
+  max-height: 500px; /* wysokość kontenera tabeli */
+  overflow-y: auto;  /* scroll pionowy */
+  overflow-x: auto;  /* scroll poziomy */
+}
+
+#drutTable thead th,
+#sprezTable thead th {
+  position: sticky;
+  top: 0;
+  background-color: #f8f9fa; /* kolor nagłówków */
+  z-index: 10;                /* aby były nad innymi komórkami */
+  border-bottom: 2px solid #dee2e6;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08); /* delikatny cień */
+}
+
+/* ---- Tabele DRUT i SPREŻYNY ---- */
+#drutTable th, #drutTable td,
+#sprezTable th, #sprezTable td {
+  white-space: nowrap;
+  vertical-align: middle;
+  text-align: center;
+  font-size: 14px;
+  border: 1px solid #dee2e6;
+  padding: 8px;
+}
+
+#drutTable th, #sprezTable th {
+  font-weight: 600;
+}
+
+#drutTable, #sprezTable {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+/* ---- Formularz dodawania (lekki cień + zaokrąglenia) ---- */
+#addForm .card {
+  border-radius: 8px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  padding: 15px;
+  background-color: #ffffff;
+}
+
+/* ---- Responsywne dopasowanie dla małych ekranów ---- */
+@media (max-width: 768px) {
+  #drutTable th, #drutTable td,
+  #sprezTable th, #sprezTable td {
+    font-size: 12px;
+    padding: 6px;
+  }
+
+  /* Formularz: kolumny układają się w pionie */
+  #addForm .row > [class*='col-'] {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+}
