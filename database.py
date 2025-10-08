@@ -7,6 +7,7 @@ class Database:
     def __init__(self, db_path=DB_PATH):
         self.db_path = db_path
         self.conn = sqlite3.connect(self.db_path, check_same_thread=False)
+        self.conn.row_factory = sqlite3.Row  # pozwala używać nazw kolumn w wynikach
         self.c = self.conn.cursor()
         self._create_tables()
 
@@ -28,7 +29,7 @@ class Database:
             przyjecie_materialu TEXT
         )
         """)
-        # tabela sprezyny
+        # tabela sprezyny z grubosc_drutu
         self.c.execute("""
         CREATE TABLE IF NOT EXISTS sprezyny (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -37,6 +38,7 @@ class Database:
             nr_rysunku TEXT,
             ilosc INTEGER,
             rodzaj_sprezyny TEXT,
+            grubosc_drutu TEXT,
             gatunek_drutu TEXT,
             srednica_dz REAL,
             dlugosc_lo REAL,
@@ -69,11 +71,17 @@ class Database:
                     COALESCE(nazwa_detalu,'') LIKE ? OR
                     COALESCE(nr_rysunku,'') LIKE ? OR
                     COALESCE(rodzaj_sprezyny,'') LIKE ? OR
-                    COALESCE(gatunek_drutu,'') LIKE ?
-            """, (q,)*5)
+                    COALESCE(grubosc_drutu,'') LIKE ? OR
+                    COALESCE(gatunek_drutu,'') LIKE ? OR
+                    COALESCE(srednica_dz,'') LIKE ? OR
+                    COALESCE(dlugosc_lo,'') LIKE ? OR
+                    COALESCE(liczba_zwoi,'') LIKE ? OR
+                    COALESCE(szlifowanie,'') LIKE ?
+            """, (q,)*10)
         return self.c.fetchall()
 
     def insert(self, table, values_tuple):
+        # values_tuple musi mieć dokładnie tyle elementów ile kolumn poza id
         placeholders = ','.join('?' for _ in values_tuple)
         self.c.execute(f"INSERT INTO {table} VALUES (NULL,{placeholders})", values_tuple)
         self.conn.commit()
@@ -103,6 +111,7 @@ class Database:
                     nr_rysunku=?,
                     ilosc=?,
                     rodzaj_sprezyny=?,
+                    grubosc_drutu=?,
                     gatunek_drutu=?,
                     srednica_dz=?,
                     dlugosc_lo=?,

@@ -1,7 +1,7 @@
-
 {% extends "base.html" %}
 {% block content %}
 <h3>Stan magazynowy SPRĘŻYN</h3>
+
 <div class="row mb-2">
   <div class="col-md-6">
     <input id="searchSprezyny" class="form-control" placeholder="Szukaj (live) — wpisz, aby filtrować...">
@@ -12,53 +12,62 @@
     {% endif %}
   </div>
 </div>
+
 <div id="addForm" class="collapse mb-3">
   {% if role == 'admin' %}
   <div class="card card-body shadow-sm border">
     <form method="post">
       <div class="row g-3">
         <div class="col-md-3">
-          <label for="klient" class="form-label">Klient</label>
-          <input id="klient" name="klient" class="form-control" placeholder="Klient">
+          <label class="form-label">Klient</label>
+          <input name="klient" class="form-control" placeholder="Klient">
         </div>
         <div class="col-md-3">
-          <label for="nazwa_detalu" class="form-label">Nazwa detalu</label>
-          <input id="nazwa_detalu" name="nazwa_detalu" class="form-control" placeholder="Nazwa detalu">
+          <label class="form-label">Nazwa detalu</label>
+          <input name="nazwa_detalu" class="form-control" placeholder="Nazwa detalu">
         </div>
         <div class="col-md-2">
-          <label for="nr_rysunku" class="form-label">Nr. rysunku</label>
-          <input id="nr_rysunku" name="nr_rysunku" class="form-control" placeholder="Nr. rysunku">
+          <label class="form-label">Nr. rysunku</label>
+          <input name="nr_rysunku" class="form-control" placeholder="Nr. rysunku">
         </div>
         <div class="col-md-1">
-          <label for="ilosc" class="form-label">Ilość</label>
-          <input id="ilosc" name="ilosc" type="number" min="0" class="form-control" placeholder="Ilość">
+          <label class="form-label">Ilość</label>
+          <input name="ilosc" type="number" min="0" class="form-control" placeholder="Ilość">
         </div>
         <div class="col-md-3">
-          <label for="rodzaj_sprezyny" class="form-label">Rodzaj sprężyny</label>
-          <input id="rodzaj_sprezyny" name="rodzaj_sprezyny" class="form-control" placeholder="Rodzaj">
+          <label class="form-label">Rodzaj sprężyny</label>
+          <input name="rodzaj_sprezyny" class="form-control" placeholder="Rodzaj">
         </div>
       </div>
 
       <div class="row g-3 mt-2">
         <div class="col-md-3">
-          <label for="grubosc_drutu" class="form-label">Grubość drutu</label>
-          <input id="grubosc_drutu" name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu">
-        </div>
-        <div class="col-md-2">
-          <label for="srednica_dz" class="form-label">Średnica Dz</label>
-          <input id="srednica_dz" name="srednica_dz" class="form-control" placeholder="Średnica Dz">
-        </div>
-        <div class="col-md-2">
-          <label for="dlugosc_lo" class="form-label">Długość Lo</label>
-          <input id="dlugosc_lo" name="dlugosc_lo" class="form-control" placeholder="Długość Lo">
-        </div>
-        <div class="col-md-2">
-          <label for="liczba_zwoi" class="form-label">Liczba zwoi</label>
-          <input id="liczba_zwoi" name="liczba_zwoi" class="form-control" placeholder="Liczba zwoi">
+          <label class="form-label">Grubość drutu</label>
+          <input name="grubosc_drutu" class="form-control" placeholder="Grubość drutu">
         </div>
         <div class="col-md-3">
-          <label for="szlifowanie" class="form-label">Szlifowanie</label>
-          <input id="szlifowanie" name="szlifowanie" class="form-control" placeholder="Szlifowanie (tak/nie)">
+          <label class="form-label">Gatunek drutu</label>
+          <input name="gatunek_drutu" class="form-control" placeholder="Gatunek drutu">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Średnica Dz</label>
+          <input name="srednica_dz" class="form-control" placeholder="Średnica Dz">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Długość Lo</label>
+          <input name="dlugosc_lo" class="form-control" placeholder="Długość Lo">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Liczba zwoi</label>
+          <input name="liczba_zwoi" class="form-control" placeholder="Liczba zwoi">
+        </div>
+        <div class="col-md-2">
+          <label class="form-label">Szlifowanie</label>
+          <select name="szlifowanie" class="form-select">
+            <option value="">-- wybierz --</option>
+            <option value="Tak">Tak</option>
+            <option value="Nie">Nie</option>
+          </select>
         </div>
       </div>
 
@@ -89,57 +98,123 @@
     <tbody id="sprezBody">
       {% for row in dane %}
       <tr>
-        <td>{{ row[0] }}</td>
-        <td>{{ row[1] }}</td>
-        <td>{{ row[2] }}</td>
-        <td>{{ row[3] }}</td>
-        <td>{{ row[4] }}</td>
-        <td>{{ row[5] }}</td>
-        <td>{{ row[6] }}</td>
-        <td>{{ row[7] }}</td>
-        <td>{{ row[8] }}</td>
-        <td>{{ row[9] }}</td>
-        <td>{{ row[10] }}</td>
+        <td>{{ row['klient'] }}</td>
+        <td>{{ row['nazwa_detalu'] }}</td>
+        <td>{{ row['nr_rysunku'] }}</td>
+        <td>{{ row['ilosc'] }}</td>
+        <td>{{ row['rodzaj_sprezyny'] }}</td>
+        <td>{{ row['grubosc_drutu'] }}</td>
+        <td>{{ row['gatunek_drutu'] }}</td>
+        <td>{{ row['srednica_dz'] }}</td>
+        <td>{{ row['dlugosc_lo'] }}</td>
+        <td>{{ row['liczba_zwoi'] }}</td>
+        <td>{{ row['szlifowanie'] }}</td>
         {% if role=='admin' %}
         <td>
-          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ row[0] }}">Edytuj</button>
-          <form method="post" action="{{ url_for('sprezyny_delete', record_id=row[0]) }}" style="display:inline;">
+          <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal{{ row['id'] }}">Edytuj</button>
+          <form method="post" action="{{ url_for('sprezyny_delete', record_id=row['id']) }}" style="display:inline;">
             <button class="btn btn-sm btn-danger" onclick="return confirm('Usuń rekord?')">Usuń</button>
           </form>
         </td>
         {% endif %}
       </tr>
+
+      {% if role=='admin' %}
+      <!-- Modal -->
+      <div class="modal fade" id="editModal{{ row['id'] }}" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title">Edytuj wpis</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="post" action="{{ url_for('sprezyny_edit', record_id=row['id']) }}">
+              <div class="modal-body">
+                <div class="row g-3">
+                  <div class="col-md-3">
+                    <label class="form-label">Klient</label>
+                    <input name="klient" class="form-control" value="{{ row['klient'] }}">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Nazwa detalu</label>
+                    <input name="nazwa_detalu" class="form-control" value="{{ row['nazwa_detalu'] }}">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Nr. rysunku</label>
+                    <input name="nr_rysunku" class="form-control" value="{{ row['nr_rysunku'] }}">
+                  </div>
+                  <div class="col-md-1">
+                    <label class="form-label">Ilość</label>
+                    <input name="ilosc" type="number" class="form-control" value="{{ row['ilosc'] }}">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Rodzaj sprężyny</label>
+                    <input name="rodzaj_sprezyny" class="form-control" value="{{ row['rodzaj_sprezyny'] }}">
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-2">
+                  <div class="col-md-3">
+                    <label class="form-label">Grubość drutu</label>
+                    <input name="grubosc_drutu" class="form-control" value="{{ row['grubosc_drutu'] }}">
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label">Gatunek drutu</label>
+                    <input name="gatunek_drutu" class="form-control" value="{{ row['gatunek_drutu'] }}">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Średnica Dz</label>
+                    <input name="srednica_dz" class="form-control" value="{{ row['srednica_dz'] }}">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Długość Lo</label>
+                    <input name="dlugosc_lo" class="form-control" value="{{ row['dlugosc_lo'] }}">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Liczba zwoi</label>
+                    <input name="liczba_zwoi" class="form-control" value="{{ row['liczba_zwoi'] }}">
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label">Szlifowanie</label>
+                    <select name="szlifowanie" class="form-select">
+                      <option value="Tak" {% if row['szlifowanie']=='Tak' %}selected{% endif %}>Tak</option>
+                      <option value="Nie" {% if row['szlifowanie']=='Nie' %}selected{% endif %}>Nie</option>
+                    </select>
+                  </div>
+                </div>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anuluj</button>
+                <button type="submit" class="btn btn-primary">Zapisz zmiany</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      </div>
+      {% endif %}
       {% endfor %}
     </tbody>
   </table>
 </div>
 
-
 <script>
-  // Pobieramy input i tabelę
-  const searchInputSprezyny = document.getElementById('searchSprezyny');
-  const sprezTable = document.getElementById('sprezTable');
-  const sprezBody = document.getElementById('sprezBody');
+const searchInputSprezyny = document.getElementById('searchSprezyny');
+const sprezBody = document.getElementById('sprezBody');
 
-  searchInputSprezyny.addEventListener('input', function() {
-    const filter = this.value.toLowerCase();
-    const rows = sprezBody.getElementsByTagName('tr');
-
-    for (let i = 0; i < rows.length; i++) {
-      const cells = rows[i].getElementsByTagName('td');
-      let match = false;
-
-      // sprawdzamy każdą komórkę w wierszu
-      for (let j = 0; j < cells.length; j++) {
-        if (cells[j].textContent.toLowerCase().includes(filter)) {
-          match = true;
-          break;
-        }
+searchInputSprezyny.addEventListener('input', function() {
+  const filter = this.value.toLowerCase();
+  const rows = sprezBody.getElementsByTagName('tr');
+  for (let i = 0; i < rows.length; i++) {
+    const cells = rows[i].getElementsByTagName('td');
+    let match = false;
+    for (let j = 0; j < cells.length; j++) {
+      if (cells[j].textContent.toLowerCase().includes(filter)) {
+        match = true;
+        break;
       }
-
-      // pokazujemy lub ukrywamy wiersz
-      rows[i].style.display = match ? '' : 'none';
     }
-  });
+    rows[i].style.display = match ? '' : 'none';
+  }
+});
 </script>
 {% endblock %}

@@ -1,64 +1,64 @@
 document.addEventListener("DOMContentLoaded", function() {
+  const role = "{{ role }}"; // wstawiana rola admina z HTML
+
+  // --- Przeliczanie suma = ilość x waga w formularzu dodawania ---
   const ilosc = document.getElementById("ilosc");
   const waga = document.getElementById("waga");
   const suma = document.getElementById("suma");
 
-  function przeliczSume() {
-    const il = parseFloat(ilosc.value) || 0;
-    const wg = parseFloat(waga.value) || 0;
-    suma.value = (il * wg).toFixed(2);
+  function przeliczSume(elI, elW, elS) {
+    const il = parseFloat(elI.value) || 0;
+    const wg = parseFloat(elW.value) || 0;
+    elS.value = (il * wg).toFixed(2);
   }
 
-  ilosc.addEventListener("input", przeliczSume);
-  waga.addEventListener("input", przeliczSume);
-});
-
-const role = "{{ role }}";  // pamiętaj, żeby w HTML wstawić wartość roli admina
-
-// debounce helper
-function debounce(fn, delay) {
-  let t;
-  return function(...args) {
-    clearTimeout(t);
-    t = setTimeout(() => fn.apply(this, args), delay);
+  if (ilosc && waga && suma) {
+    ilosc.addEventListener("input", () => przeliczSume(ilosc, waga, suma));
+    waga.addEventListener("input", () => przeliczSume(ilosc, waga, suma));
   }
-}
 
-async function fetchDrut(q) {
-  const url = '/drut/search?q=' + encodeURIComponent(q);
-  const res = await fetch(url);
-  if (!res.ok) return;
-  const body = document.getElementById('drutBody');
-  body.innerHTML = '';
-  const data = await res.json();
+  // --- Przeliczanie i ustawianie select w modalach edycji ---
+  const modals = document.querySelectorAll('.modal');
+  modals.forEach(modal => {
+    modal.addEventListener('shown.bs.modal', function () {
+      const id = modal.id.split('editModal')[1];
+      const il = document.getElementById('ilosc-' + id);
+      const wg = document.getElementById('waga-' + id);
+      const sm = document.getElementById('suma-' + id);
+      const selectRodzaj = modal.querySelector('select[name="rodzaj"]');
 
-  data.forEach(row => {
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td>${row.stan||''}</td>
-      <td>${row.srednica_drutu||''}</td>
-      <td>${row.gatunek_drutu||''}</td>
-      <td>${row.dostawca||''}</td>
-      <td>${row.ilosc_szpule_kregi||''}</td>
-      <td>${row.rodzaj||''}</td>
-      <td>${row.waga||''}</td>
-      <td>${row.suma_kg||''}</td>
-      <td>${row.partia_materialu_nr||''}</td>
-      <td>${row.przewidywana_data_dostawy||''}</td>
-      <td>${row.przyjecie_materialu||''}</td>
-      ${role === 'admin' ? `
-      <td>
-        <button class="btn btn-sm btn-primary" data-bs-toggle="modal" data-bs-target="#editModal${row.id}">Edytuj</button>
-        <form method="post" action="/drut/delete/${row.id}" style="display:inline;">
-          <button class="btn btn-sm btn-danger" onclick="return confirm('Usuń rekord?')">Usuń</button>
-        </form>
-      </td>` : ''}
-    `;
-    body.appendChild(tr);
+      if (!il || !wg || !sm || !selectRodzaj) return;
+
+      // Przelicz od razu po otwarciu modala
+      przeliczSume(il, wg, sm);
+
+      // Ustaw aktualną wartość select z data-rodzaj
+      const aktualna = il.dataset.rodzaj || '';
+      if (aktualna) {
+        selectRodzaj.value = aktualna;
+      }
+
+      // Podpinamy event listener na zmianę pól
+      const handler = () => przeliczSume(il, wg, sm);
+      il.addEventListener('input', handler);
+      wg.addEventListener('input', handler);
+    });
   });
-}
 
-const inputD = document.getElementById('searchDrut');
-inputD.addEventListener('keyup', debounce((e) => {
-  fetchDrut(e.target.value);
-}, 250));
+  // --- Live search filtrujący istniejące wiersze ---
+  const searchInput = document.getElementById('searchDrut');
+  searchInput.addEventListener('input', function() {
+    const filter = this.value.toLowerCase();
+    const rows = document.querySelectorAll('#drutBody tr');
+
+    rows.forEach(row => {
+      let match = false;
+      row.querySelectorAll('td').forEach(cell => {
+        if (cell.textContent.toLowerCase().includes(filter)) {
+          match = true;
+        }
+      });
+      row.style.display = match ? '' : 'none';
+    });
+  });
+});

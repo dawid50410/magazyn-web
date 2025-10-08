@@ -63,17 +63,20 @@ def drut_page():
             flash('Brak uprawnień do modyfikacji', 'danger')
             return redirect(url_for('drut_page'))
         form = request.form
+        # dodane 'rodzaj' w odpowiednim miejscu (po ilości)
         values = (
             form.get('stan',''), form.get('srednica_drutu',''), form.get('gatunek_drutu',''),
-            form.get('dostawca',''), form.get('ilosc_szpule_kregi',''), form.get('waga',''),
-            form.get('suma_kg',''), form.get('partia_materialu_nr',''), form.get('przewidywana_data_dostawy',''),
-            form.get('przyjecie_materialu','')
+            form.get('dostawca',''), form.get('ilosc_szpule_kregi',''), form.get('rodzaj',''),
+            form.get('waga',''), form.get('suma_kg',''), form.get('partia_materialu_nr',''),
+            form.get('przewidywana_data_dostawy',''), form.get('przyjecie_materialu','')
         )
         db.insert('drut', values)
         flash('Dodano wpis DRUT', 'success')
         return redirect(url_for('drut_page'))
+
     dane = db.fetch_all('drut')
     return render_template('drut.html', dane=dane, role=session.get('role'))
+
 
 @app.route('/drut/search')
 @login_required
@@ -104,9 +107,9 @@ def drut_edit(record_id):
     form = request.form
     values = (
         form.get('stan',''), form.get('srednica_drutu',''), form.get('gatunek_drutu',''),
-        form.get('dostawca',''), form.get('ilosc_szpule_kregi',''), form.get('waga',''),
-        form.get('suma_kg',''), form.get('partia_materialu_nr',''), form.get('przewidywana_data_dostawy',''),
-        form.get('przyjecie_materialu','')
+        form.get('dostawca',''), form.get('ilosc_szpule_kregi',''), form.get('rodzaj',''),
+        form.get('waga',''), form.get('suma_kg',''), form.get('partia_materialu_nr',''),
+        form.get('przewidywana_data_dostawy',''), form.get('przyjecie_materialu','')
     )
     db.update('drut', record_id, values)
     flash('Zaktualizowano rekord', 'success')
